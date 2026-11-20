@@ -1,0 +1,13 @@
+table 'Param Tarifa'
+	lineageTag: 3f296479-d0a3-4a25-9730-6b7e112fd676
+
+	column 'Tarifa COP/kWh'
+		dataType: int64
+		lineageTag: e5fd831a-f0d4-469b-a27f-0caca51a42b3
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition 'Param Tarifa' = calculated
+		mode: import
+		source = GENERATESERIES(500, 1500, 50)
+

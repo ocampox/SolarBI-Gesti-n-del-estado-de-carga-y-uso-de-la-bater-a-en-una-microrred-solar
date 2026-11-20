@@ -1,0 +1,16 @@
+{
+ "1": {
+  "leidas": 1610276,
+  "validas": 1608700,
+  "R1_soc_nulo": 809,
+  "R4_huecos": 214,
+  "R2_fuera_rango": 767
+ },
+ "2": {
+  "leidas": 1379483,
+  "validas": 1320656,
+  "R1_soc_nulo": 57122,
+  "R4_huecos": 102,
+  "R2_fuera_rango": 1705
+ }
+}

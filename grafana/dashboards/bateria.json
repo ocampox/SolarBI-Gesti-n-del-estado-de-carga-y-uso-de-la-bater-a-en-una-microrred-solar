@@ -1,0 +1,28 @@
+{
+  "uid": "solarbi-bateria", "title": "SolarBI - Estado de bateria", "schemaVersion": 39, "version": 1,
+  "refresh": "10s", "time": {"from": "now-1h", "to": "now"},
+  "templating": {"list": [{
+    "name": "inversor", "type": "query", "label": "Inversor", "multi": true, "includeAll": true, "current": {"text": "All", "value": "$__all"},
+    "datasource": {"type": "postgres", "uid": "solarbi-pg"},
+    "query": "SELECT inverter_id FROM dw.dim_inversor ORDER BY 1", "refresh": 1}]},
+  "panels": [
+    {"id": 1, "type": "timeseries", "title": "SoC por inversor (%)", "gridPos": {"x": 0, "y": 0, "w": 16, "h": 9},
+     "datasource": {"type": "postgres", "uid": "solarbi-pg"},
+     "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100,
+        "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "orange", "value": 20}, {"color": "green", "value": 40}]},
+        "custom": {"thresholdsStyle": {"mode": "line"}}}, "overrides": []},
+     "targets": [{"refId": "A", "format": "time_series", "rawSql": "SELECT ts_utc AS time, 'inv_' || inverter_id AS metric, soc AS value FROM dw.fact_bateria_vivo WHERE $__timeFilter(ts_utc) AND inverter_id IN ($inversor) ORDER BY 1"}]},
+    {"id": 2, "type": "gauge", "title": "SoC actual", "gridPos": {"x": 16, "y": 0, "w": 8, "h": 9},
+     "datasource": {"type": "postgres", "uid": "solarbi-pg"},
+     "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100,
+        "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "orange", "value": 20}, {"color": "green", "value": 40}]}}, "overrides": []},
+     "options": {"reduceOptions": {"calcs": ["lastNotNull"], "values": false}},
+     "targets": [{"refId": "A", "format": "time_series", "rawSql": "SELECT now() AS time, 'inv_' || inverter_id AS metric, soc AS value FROM (SELECT DISTINCT ON (inverter_id) inverter_id, soc FROM dw.fact_bateria_vivo WHERE inverter_id IN ($inversor) ORDER BY inverter_id, ts_utc DESC) t"}]},
+    {"id": 3, "type": "timeseries", "title": "Corriente de bateria (A) - positivo = descarga", "gridPos": {"x": 0, "y": 9, "w": 16, "h": 8},
+     "datasource": {"type": "postgres", "uid": "solarbi-pg"}, "fieldConfig": {"defaults": {"unit": "amp"}, "overrides": []},
+     "targets": [{"refId": "A", "format": "time_series", "rawSql": "SELECT ts_utc AS time, 'inv_' || inverter_id AS metric, corriente_a AS value FROM dw.fact_bateria_vivo WHERE $__timeFilter(ts_utc) AND inverter_id IN ($inversor) ORDER BY 1"}]},
+    {"id": 4, "type": "table", "title": "Estado actual por inversor", "gridPos": {"x": 16, "y": 9, "w": 8, "h": 8},
+     "datasource": {"type": "postgres", "uid": "solarbi-pg"},
+     "targets": [{"refId": "A", "format": "table", "rawSql": "SELECT DISTINCT ON (v.inverter_id) v.inverter_id AS inversor, e.estado, v.soc, v.volt, v.corriente_a, v.ts_utc FROM dw.fact_bateria_vivo v JOIN dw.dim_estado_soc e ON v.soc >= e.soc_desde AND v.soc < e.soc_hasta WHERE v.inverter_id IN ($inversor) ORDER BY v.inverter_id, v.ts_utc DESC"}]}
+  ]
+}

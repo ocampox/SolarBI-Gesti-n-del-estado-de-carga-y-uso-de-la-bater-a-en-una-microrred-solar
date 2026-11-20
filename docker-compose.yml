@@ -1,0 +1,27 @@
+# Desarrollo local. Bronze: copiar la SQLite oficial a ./data/opencem-v1.0.0.sqlite
+services:
+  postgres:
+    image: postgres:16.4-alpine
+    environment: {POSTGRES_DB: "${POSTGRES_DB}", POSTGRES_USER: "${POSTGRES_USER}", POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"}
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: [pg_data:/var/lib/postgresql/data, "./sql/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro"]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"], interval: 5s, retries: 10}
+  etl:
+    build: ./etl
+    profiles: [etl]
+    depends_on: {postgres: {condition: service_healthy}}
+    environment: &pg {POSTGRES_HOST: postgres, POSTGRES_DB: "${POSTGRES_DB}", POSTGRES_USER: "${POSTGRES_USER}", POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"}
+    volumes: ["./Fuente de datos/opencem-v1.0.0.sqlite/opencem-v1.0.0.sqlite:/data/opencem-v1.0.0.sqlite:ro"]
+  simulator:
+    build: ./etl
+    command: ["python", "-u", "simulate.py"]
+    depends_on: {postgres: {condition: service_healthy}}
+    environment: {<<: *pg, SIM_INTERVAL_SEC: "${SIM_INTERVAL_SEC}"}
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:11.2.0
+    depends_on: {postgres: {condition: service_healthy}}
+    ports: ["127.0.0.1:3001:3000"]
+    environment: {<<: *pg, GF_SECURITY_ADMIN_USER: "${GRAFANA_ADMIN_USER}", GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_ADMIN_PASSWORD}"}
+    volumes: ["./grafana/provisioning:/etc/grafana/provisioning:ro", "./grafana/dashboards:/var/lib/grafana/dashboards:ro"]
+volumes: {pg_data: {}}

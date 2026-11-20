@@ -1,0 +1,42 @@
+table dim_fecha
+	lineageTag: 58aa096e-b0c2-4dff-b2f7-dd91a7fa8923
+	dataCategory: Time
+
+	column fecha
+		dataType: dateTime
+		isKey
+		formatString: dd/mm/yyyy
+		lineageTag: d3a1d5af-175c-4c04-aacd-17e02ad76eb2
+		summarizeBy: none
+		sourceColumn: fecha
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column anio
+		dataType: int64
+		lineageTag: 81e30a7e-5ab2-4ece-87f2-f41800246e5a
+		summarizeBy: none
+		sourceColumn: anio
+
+	column mes
+		dataType: int64
+		lineageTag: 838c06d1-091a-493e-9b05-67205b5bd2bd
+		summarizeBy: none
+		sourceColumn: mes
+
+	column dia_semana
+		dataType: int64
+		lineageTag: d713f039-657b-438c-ab23-fa543b54cde4
+		summarizeBy: none
+		sourceColumn: dia_semana
+
+	partition dim_fecha = m
+		mode: import
+		source =
+				let
+					Origen = PostgreSQL.Database("localhost:5433", "solar_db"),
+					T = Origen{[Schema="dw", Item="dim_fecha"]}[Data],
+					FechaLimpia = Table.TransformColumns(T, {{"fecha", each if Value.Is(_, type datetimezone) then Date.From(DateTimeZone.RemoveZone(_)) else Date.From(_), type date}})
+				in
+					FechaLimpia
+

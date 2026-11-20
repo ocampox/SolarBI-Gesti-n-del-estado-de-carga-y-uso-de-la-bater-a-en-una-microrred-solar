@@ -1,0 +1,124 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "b1",
+  "position": {
+    "x": 20.465116279069768,
+    "y": 160,
+    "z": 0,
+    "height": 560,
+    "width": 620
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_fecha"
+                    }
+                  },
+                  "Property": "mes"
+                }
+              },
+              "queryRef": "dim_fecha.mes",
+              "nativeQueryRef": "mes",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_bateria_hora"
+                    }
+                  },
+                  "Property": "kWh PV"
+                }
+              },
+              "queryRef": "fact_bateria_hora.kWh PV",
+              "nativeQueryRef": "kWh PV",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_bateria_hora"
+                    }
+                  },
+                  "Property": "kWh Red"
+                }
+              },
+              "queryRef": "fact_bateria_hora.kWh Red",
+              "nativeQueryRef": "kWh Red",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_bateria_hora"
+                    }
+                  },
+                  "Property": "kWh Carga"
+                }
+              },
+              "queryRef": "fact_bateria_hora.kWh Carga",
+              "nativeQueryRef": "kWh Carga",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_bateria_hora"
+                    }
+                  },
+                  "Property": "kWh Descarga"
+                }
+              },
+              "queryRef": "fact_bateria_hora.kWh Descarga",
+              "nativeQueryRef": "kWh Descarga",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Balance energetico por mes: PV, red, carga y descarga'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

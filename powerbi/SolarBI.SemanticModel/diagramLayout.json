@@ -1,0 +1,99 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 335.38305001469382,
+            "y": 402
+          },
+          "nodeIndex": "dim_estado_soc",
+          "nodeLineageTag": "cba3169c-8701-46bd-9d84-774b28a7c05a",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 653.38305001469371,
+            "y": 166
+          },
+          "nodeIndex": "dim_fecha",
+          "nodeLineageTag": "58aa096e-b0c2-4dff-b2f7-dd91a7fa8923",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 15,
+            "y": 4
+          },
+          "nodeIndex": "dim_inversor",
+          "nodeLineageTag": "8c7bedd2-01d4-4fa4-a689-df90cfb93377",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 334.20156119318523,
+            "y": -50
+          },
+          "nodeIndex": "fact_bateria_hora",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 914.38305001469371,
+            "y": 0
+          },
+          "nodeIndex": "Param Capacidad",
+          "nodeLineageTag": "de5ab649-6447-49e8-af69-0702c95ffbe1",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 916.38305001469371,
+            "y": 208
+          },
+          "nodeIndex": "Param Tarifa",
+          "nodeLineageTag": "3f296479-d0a3-4a25-9730-6b7e112fd676",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Todas las tablas",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas las tablas",
+  "defaultDiagram": "Todas las tablas"
+}

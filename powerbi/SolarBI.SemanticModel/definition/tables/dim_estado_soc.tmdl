@@ -1,0 +1,36 @@
+table dim_estado_soc
+	lineageTag: cba3169c-8701-46bd-9d84-774b28a7c05a
+
+	column estado_key
+		dataType: int64
+		lineageTag: 13e634f9-542c-4712-913d-30142097fa10
+		summarizeBy: none
+		sourceColumn: estado_key
+
+	column estado
+		dataType: string
+		lineageTag: c2ac227b-29be-4c2a-a86c-a45b6774ca8b
+		summarizeBy: none
+		sourceColumn: estado
+
+	column soc_desde
+		dataType: double
+		lineageTag: 444f30a7-5ef5-4e76-9476-e7ef04eec15f
+		summarizeBy: none
+		sourceColumn: soc_desde
+
+	column soc_hasta
+		dataType: double
+		lineageTag: 4e88f14b-053c-451c-b567-31c16563d76b
+		summarizeBy: none
+		sourceColumn: soc_hasta
+
+	partition dim_estado_soc = m
+		mode: import
+		source =
+				let
+					Origen = PostgreSQL.Database("localhost:5433", "solar_db"),
+					T = Origen{[Schema="dw", Item="dim_estado_soc"]}[Data]
+				in
+					T
+

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "k0",
+  "position": {
+    "x": 20.465116279069768,
+    "y": 10.232558139534884,
+    "z": 0,
+    "height": 126.51162790697676,
+    "width": 299.53488372093022
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Fields": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_bateria_hora"
+                    }
+                  },
+                  "Property": "kWh Descarga"
+                }
+              },
+              "queryRef": "fact_bateria_hora.kWh Descarga",
+              "nativeQueryRef": "kWh Descarga",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'kWh Descarga'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

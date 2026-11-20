@@ -1,0 +1,207 @@
+table fact_bateria_hora
+	lineageTag: 3ec478b5-fbba-43ac-8544-7061e6ae0d44
+
+	measure 'SoC Prom %' = DIVIDE(SUMX(fact_bateria_hora, fact_bateria_hora[soc_prom] * fact_bateria_hora[seg_obs]), SUM(fact_bateria_hora[seg_obs]))
+		formatString: 0.0
+		lineageTag: 4767552c-09e5-4b42-a908-de7cdbe6fefa
+
+	measure 'SoC Min %' = MIN(fact_bateria_hora[soc_min])
+		formatString: 0.0
+		lineageTag: af101d53-d5a7-4666-bf62-31e60d3ccdef
+
+	measure '% Tiempo SoC Bajo' = DIVIDE(SUM(fact_bateria_hora[seg_soc_bajo]), SUM(fact_bateria_hora[seg_obs]))
+		formatString: 0.00%
+		lineageTag: 6f80d3a4-097a-4e7c-9065-b2d5992298a3
+
+	measure 'kWh Carga' = SUM(fact_bateria_hora[kwh_carga])
+		formatString: #,0.0
+		lineageTag: 283f9970-9c2c-4b01-936d-06ed9e1bf6e7
+
+	measure 'kWh Descarga' = SUM(fact_bateria_hora[kwh_descarga])
+		formatString: #,0.0
+		lineageTag: 4f27b9fb-8eff-45d3-99c8-9b228807752b
+
+	measure 'kWh PV' = SUM(fact_bateria_hora[kwh_pv])
+		formatString: #,0.0
+		lineageTag: fc1ee920-3b51-4297-bdf4-720883cb076c
+
+	measure 'kWh Red' = SUM(fact_bateria_hora[kwh_red])
+		formatString: #,0.0
+		lineageTag: 3b858659-7232-4850-b899-14689d533ebc
+
+	measure 'Eficiencia Ida y Vuelta' = DIVIDE([kWh Descarga], [kWh Carga] - SUM(fact_bateria_hora[delta_soc_kwh]))
+		formatString: 0.000
+		lineageTag: ea3773f4-dfb2-4d89-8bde-434fa3817c8a
+
+	measure 'Ciclos Equivalentes' = DIVIDE([kWh Descarga], SELECTEDVALUE('Param Capacidad'[Capacidad kWh], 10.24) * DISTINCTCOUNT(fact_bateria_hora[inverter_id]))
+		formatString: 0.0
+		lineageTag: 357528ff-3965-4d59-86af-6afde8ab39f4
+
+	measure 'Autosuficiencia %' = 1 - DIVIDE([kWh Red], SUM(fact_bateria_hora[kwh_carga_ac]))
+		formatString: 0.0%
+		lineageTag: b6930520-ae55-41a0-a7ec-c60661f12e7a
+
+	measure 'Disponibilidad Registro' = DIVIDE(SUM(fact_bateria_hora[seg_obs]), SUM(fact_bateria_hora[seg_obs]) + SUM(fact_bateria_hora[seg_hueco]))
+		formatString: 0.0%
+		lineageTag: 28baf715-faa1-4238-8223-dd44ae80241a
+
+	measure 'Ahorro COP' = [kWh Descarga] * SELECTEDVALUE('Param Tarifa'[Tarifa COP/kWh], 850)
+		formatString: #,0
+		lineageTag: 18d1d5bc-a346-4fc4-8d51-df754c60770d
+
+	measure 'kWh Descarga Mes Anterior' = CALCULATE([kWh Descarga], DATEADD(dim_fecha[fecha], -1, MONTH))
+		formatString: #,0.0
+		lineageTag: 8f2230eb-ebbf-4d1d-8d4c-868a20872287
+
+	measure 'Var kWh Descarga vs Mes Ant %' = DIVIDE([kWh Descarga] - [kWh Descarga Mes Anterior], [kWh Descarga Mes Anterior])
+		formatString: 0.0%
+		lineageTag: 94963e7c-42a4-407a-82f6-02bd7a21cc30
+
+	measure 'kWh Descarga YTD' = TOTALYTD([kWh Descarga], dim_fecha[fecha])
+		formatString: #,0.0
+		lineageTag: 7c7215c0-7808-41d5-a8da-9aa7b020b8c8
+
+	column inverter_id
+		dataType: int64
+		lineageTag: 402774f6-9a14-4099-8b12-b4ade0ac565b
+		summarizeBy: none
+		sourceColumn: inverter_id
+
+	column hora_utc
+		dataType: dateTime
+		formatString: dd/mm/yyyy hh:nn
+		lineageTag: 6e5d070d-7c58-4a70-b3d6-f70543e8e89e
+		summarizeBy: none
+		sourceColumn: hora_utc
+
+		variation Variation
+			isDefault
+			relationship: e2778188-380a-4ef8-8d96-662724702334
+			defaultHierarchy: LocalDateTable_c5e239f6-5ac9-4ed8-a61e-7ff6509c8010.'Jerarquía de fechas'
+
+	column n_lecturas
+		dataType: int64
+		lineageTag: 1d84fbe1-79cf-4cc5-8ed9-7150b4a719c2
+		summarizeBy: sum
+		sourceColumn: n_lecturas
+
+		annotation SummarizationSetBy = Automatic
+
+	column seg_obs
+		dataType: int64
+		lineageTag: c9c652eb-a3b6-4a8f-b5b2-364990fae02f
+		summarizeBy: sum
+		sourceColumn: seg_obs
+
+		annotation SummarizationSetBy = Automatic
+
+	column seg_hueco
+		dataType: int64
+		lineageTag: bd00ee79-783c-4aa6-b934-343f3d800926
+		summarizeBy: sum
+		sourceColumn: seg_hueco
+
+		annotation SummarizationSetBy = Automatic
+
+	column seg_soc_bajo
+		dataType: int64
+		lineageTag: be6db74d-5fe0-499c-ad15-0f4bb3105899
+		summarizeBy: sum
+		sourceColumn: seg_soc_bajo
+
+		annotation SummarizationSetBy = Automatic
+
+	column soc_prom
+		dataType: double
+		formatString: 0.00
+		lineageTag: d2a838bc-a0e4-4acf-89af-4bae18aff4de
+		summarizeBy: sum
+		sourceColumn: soc_prom
+
+		annotation SummarizationSetBy = Automatic
+
+	column soc_min
+		dataType: double
+		formatString: 0.00
+		lineageTag: f095a3e3-bb7a-4449-b3d6-6c8f3220f8b7
+		summarizeBy: sum
+		sourceColumn: soc_min
+
+		annotation SummarizationSetBy = Automatic
+
+	column soc_max
+		dataType: double
+		formatString: 0.00
+		lineageTag: 1de783b8-3936-48c2-b2fd-2604feaf9b3c
+		summarizeBy: sum
+		sourceColumn: soc_max
+
+		annotation SummarizationSetBy = Automatic
+
+	column kwh_carga
+		dataType: double
+		lineageTag: 6f8cb193-c9be-4dda-a99f-e22506024a9c
+		summarizeBy: sum
+		sourceColumn: kwh_carga
+
+		annotation SummarizationSetBy = Automatic
+
+	column kwh_descarga
+		dataType: double
+		lineageTag: e68223a7-2688-4a44-9665-5e3a2ee33aa0
+		summarizeBy: sum
+		sourceColumn: kwh_descarga
+
+		annotation SummarizationSetBy = Automatic
+
+	column delta_soc_kwh
+		dataType: double
+		lineageTag: eaa7f598-dada-4e30-97f4-c5a8bd67f850
+		summarizeBy: sum
+		sourceColumn: delta_soc_kwh
+
+		annotation SummarizationSetBy = Automatic
+
+	column kwh_pv
+		dataType: double
+		lineageTag: 67b73399-dd38-4710-9586-c87906279053
+		summarizeBy: sum
+		sourceColumn: kwh_pv
+
+		annotation SummarizationSetBy = Automatic
+
+	column kwh_carga_ac
+		dataType: double
+		lineageTag: 769c5fcb-3421-4035-a13d-aea7d6abb1fa
+		summarizeBy: sum
+		sourceColumn: kwh_carga_ac
+
+		annotation SummarizationSetBy = Automatic
+
+	column kwh_red
+		dataType: double
+		lineageTag: 26efd3b1-bd1d-4503-ab0c-80aadb88b8a1
+		summarizeBy: sum
+		sourceColumn: kwh_red
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 5309bcfd-06f8-467f-9416-3178017e7e29
+		summarizeBy: none
+		sourceColumn: fecha
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition fact_bateria_hora = m
+		mode: import
+		source =
+				let
+					Origen = PostgreSQL.Database("localhost:5433", "solar_db"),
+					T = Origen{[Schema="dw", Item="fact_bateria_hora"]}[Data],
+					Fecha = Table.AddColumn(T, "fecha", each if Value.Is([hora_utc], type datetimezone) then Date.From(DateTimeZone.RemoveZone([hora_utc])) else Date.From([hora_utc]), type date)
+				in
+					Fecha
+

@@ -1,0 +1,11 @@
+.env
+data/
+out/
+__pycache__/
+*.csv
+!docs/*.csv
+.pbi/
+cache.abf
+k8s/secret.yaml
+k8s/secret.env
+Fuente de datos/

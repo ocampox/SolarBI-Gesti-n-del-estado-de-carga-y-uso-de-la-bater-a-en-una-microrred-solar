@@ -1,0 +1,22 @@
+# CronJob: cada minuto inserta 12 lecturas (una cada 5 s). Un Deployment 24/7 gastaria recursos; un Job es un solo lote.
+# Forzar la alerta: kubectl -n solar-bi set env cronjob/simulador SIM_TRIGGER=1   (revertir: SIM_TRIGGER-)
+apiVersion: batch/v1
+kind: CronJob
+metadata: {name: simulador}
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: sim
+              image: solarbi-etl:1.0
+              imagePullPolicy: Never
+              command: [python, -u, simulate.py]
+              envFrom: [{configMapRef: {name: solar-config}}, {secretRef: {name: solar-secret}}]
+              resources: {requests: {cpu: 50m, memory: 64Mi}, limits: {cpu: 200m, memory: 128Mi}}

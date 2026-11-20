@@ -1,0 +1,120 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "t1",
+  "position": {
+    "x": 19.534883720930232,
+    "y": 289.30232558139534,
+    "z": 0,
+    "height": 430,
+    "width": 1240
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_inversor"
+                    }
+                  },
+                  "Property": "nombre"
+                }
+              },
+              "queryRef": "dim_inversor.nombre",
+              "nativeQueryRef": "nombre",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_bateria_hora"
+                    }
+                  },
+                  "Property": "kWh Carga"
+                }
+              },
+              "queryRef": "fact_bateria_hora.kWh Carga",
+              "nativeQueryRef": "kWh Carga",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_bateria_hora"
+                    }
+                  },
+                  "Property": "kWh Descarga"
+                }
+              },
+              "queryRef": "fact_bateria_hora.kWh Descarga",
+              "nativeQueryRef": "kWh Descarga",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_bateria_hora"
+                    }
+                  },
+                  "Property": "Eficiencia Ida y Vuelta"
+                }
+              },
+              "queryRef": "fact_bateria_hora.Eficiencia Ida y Vuelta",
+              "nativeQueryRef": "Eficiencia Ida y Vuelta",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_bateria_hora"
+                    }
+                  },
+                  "Property": "Disponibilidad Registro"
+                }
+              },
+              "queryRef": "fact_bateria_hora.Disponibilidad Registro",
+              "nativeQueryRef": "Disponibilidad Registro",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Auditoria por inversor'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

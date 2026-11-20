@@ -1,0 +1,23 @@
+# Job: corre una vez, termina y deja evidencia (kubectl logs job/etl-carga y la tabla dw.etl_audit).
+# Imagen propia: docker build -t solarbi-etl:1.0 etl   y luego   minikube image load solarbi-etl:1.0   (kind: kind load docker-image)
+# La Bronze SQLite llega sin modificarse: minikube mount <ruta>/data:/data
+apiVersion: batch/v1
+kind: Job
+metadata: {name: etl-carga}
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: espera-pg
+          image: postgres:16.4-alpine
+          command: [sh, -c, "until pg_isready -h postgres -p 5432; do sleep 2; done"]
+      containers:
+        - name: etl
+          image: solarbi-etl:1.0
+          imagePullPolicy: Never
+          envFrom: [{configMapRef: {name: solar-config}}, {secretRef: {name: solar-secret}}]
+          volumeMounts: [{name: data, mountPath: /data, readOnly: true}]
+          resources: {requests: {cpu: 200m, memory: 256Mi}, limits: {cpu: "1", memory: 512Mi}}
+      volumes: [{name: data, hostPath: {path: /data, type: Directory}}]

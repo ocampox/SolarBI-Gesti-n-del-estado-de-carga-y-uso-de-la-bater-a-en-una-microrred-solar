@@ -1,0 +1,13 @@
+table 'Param Capacidad'
+	lineageTag: de5ab649-6447-49e8-af69-0702c95ffbe1
+
+	column 'Capacidad kWh'
+		dataType: double
+		lineageTag: 4068d93f-222a-4503-a9fb-a7ff8a399207
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition 'Param Capacidad' = calculated
+		mode: import
+		source = GENERATESERIES(5, 30, 1)
+

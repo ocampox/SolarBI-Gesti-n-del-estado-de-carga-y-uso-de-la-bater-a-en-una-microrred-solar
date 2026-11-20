@@ -1,0 +1,42 @@
+table dim_inversor
+	lineageTag: 8c7bedd2-01d4-4fa4-a689-df90cfb93377
+
+	column inverter_id
+		dataType: int64
+		lineageTag: a0c7733c-4a91-481a-8e94-299afa04d25f
+		summarizeBy: none
+		sourceColumn: inverter_id
+
+	column nombre
+		dataType: string
+		lineageTag: dd0eda01-6731-45af-b151-1512baa32fce
+		summarizeBy: none
+		sourceColumn: nombre
+
+	column capacidad_kwh
+		dataType: double
+		lineageTag: 238734c4-21a7-4855-a9a1-bf8d13f8c895
+		summarizeBy: none
+		sourceColumn: capacidad_kwh
+
+	column paneles
+		dataType: int64
+		lineageTag: 021da09a-34b2-4327-b5c7-d75640c7a485
+		summarizeBy: none
+		sourceColumn: paneles
+
+	column potencia_inversor_kw
+		dataType: double
+		lineageTag: 218e6793-5cf1-4b55-9401-116cb04c2d46
+		summarizeBy: none
+		sourceColumn: potencia_inversor_kw
+
+	partition dim_inversor = m
+		mode: import
+		source =
+				let
+					Origen = PostgreSQL.Database("localhost:5433", "solar_db"),
+					T = Origen{[Schema="dw", Item="dim_inversor"]}[Data]
+				in
+					T
+

@@ -1,0 +1,12 @@
+# Un comando (tras editar secret.env): kubectl kustomize k8s --load-restrictor LoadRestrictionsNone | kubectl apply -f -
+# Borrar todo: kubectl delete namespace solar-bi
+namespace: solar-bi
+resources: [00-namespace.yaml, 01-postgres.yaml, 02-etl-job.yaml, 03-simulator-cronjob.yaml, 04-grafana.yaml]
+secretGenerator:
+  - {name: solar-secret, envs: [secret.env]}
+configMapGenerator:
+  - {name: solar-config, literals: [POSTGRES_DB=solar_db, POSTGRES_HOST=postgres, POSTGRES_PORT=5432, SIM_INTERVAL_SEC=5, SIM_TICKS=12, SOC_BAJO=20, GAP_MAX_S=600, BANDA_MUERTA_A=1.0]}
+  - {name: pg-init, files: [01_schema.sql=../sql/01_schema.sql]}
+  - {name: grafana-ds, files: [postgres.yml=../grafana/provisioning/datasources/postgres.yml]}
+  - {name: grafana-prov, files: [provider.yml=../grafana/provisioning/dashboards/provider.yml, rules.yml=../grafana/provisioning/alerting/rules.yml]}
+  - {name: grafana-dash, files: [bateria.json=../grafana/dashboards/bateria.json]}

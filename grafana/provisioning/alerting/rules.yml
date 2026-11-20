@@ -1,0 +1,51 @@
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: bateria
+    folder: SolarBI
+    interval: 1m
+    rules:
+      - uid: soc-critico
+        title: SoC critico (< 20 %)
+        condition: C
+        for: 2m
+        noDataState: NoData
+        execErrState: Error
+        annotations: {summary: "SoC por debajo de 20 % en un inversor. Umbral: bajo 20 % se acelera la degradacion de litio y se pierde autonomia ante corte de red."}
+        labels: {severidad: alta}
+        data:
+          - refId: A
+            relativeTimeRange: {from: 600, to: 0}
+            datasourceUid: solarbi-pg
+            model:
+              refId: A
+              format: table
+              rawSql: "SELECT now() AS time, 'inv_' || inverter_id AS metric, soc AS value FROM (SELECT DISTINCT ON (inverter_id) inverter_id, soc FROM dw.fact_bateria_vivo ORDER BY inverter_id, ts_utc DESC) t"
+          - refId: B
+            datasourceUid: __expr__
+            model: {type: reduce, refId: B, expression: A, reducer: last}
+          - refId: C
+            datasourceUid: __expr__
+            model: {type: threshold, refId: C, expression: B, conditions: [{evaluator: {type: lt, params: [20]}}]}
+      - uid: sin-lecturas
+        title: Sin lecturas de bateria (> 3 min)
+        condition: C
+        for: 1m
+        noDataState: Alerting
+        execErrState: Error
+        annotations: {summary: "No llegan lecturas nuevas: simulador o adquisicion caida. Umbral 3 min = 36 lecturas perdidas a 5 s."}
+        labels: {severidad: media}
+        data:
+          - refId: A
+            relativeTimeRange: {from: 600, to: 0}
+            datasourceUid: solarbi-pg
+            model:
+              refId: A
+              format: table
+              rawSql: "SELECT now() AS time, extract(epoch FROM now() - max(ts_utc)) AS value FROM dw.fact_bateria_vivo"
+          - refId: B
+            datasourceUid: __expr__
+            model: {type: reduce, refId: B, expression: A, reducer: last}
+          - refId: C
+            datasourceUid: __expr__
+            model: {type: threshold, refId: C, expression: B, conditions: [{evaluator: {type: gt, params: [180]}}]}
